@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>송 피아노 스튜디오 수업 관리</title>
+<meta name="description" content="Song Piano Studio lesson attendance and makeup credit manager">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="./css/styles.css">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1d5c4d">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (e) {
+      console.warn('서비스 워커 등록 실패:', e);
+    });
+  });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <div class="brand" data-i18n="appName">송 피아노 스튜디오</div>
+    <div class="date" id="todayLabel"></div>
+  </div>
+  <div class="actions">
+    <button class="icon-btn" id="langToggle" aria-label="Language">EN</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" data-tab="today" aria-selected="true" data-i18n="today">오늘의 수업</button>
+  <button class="tab" role="tab" data-tab="students" aria-selected="false" data-i18n="students">원생</button>
+  <button class="tab" role="tab" data-tab="credits" aria-selected="false" data-i18n="credits">보강 크레딧</button>
+  <button class="tab" role="tab" data-tab="settings" aria-selected="false" data-i18n="settings">설정</button>
+</nav>
+
+<main>
+  <div id="demoBanner" class="banner" hidden>
+    <strong><span data-i18n="demoMode">데모 모드</span></strong>
+    <span data-i18n="setupDesc">Supabase 프로젝트를 만들고 설정 탭에서 URL과 키를 입력하면 실제 데이터로 동작해요. 지금은 데모 모드로 화면만 확인할 수 있어요.</span>
+    <div style="margin-top:8px"><button class="row-btn primary" id="goSettings" data-i18n="goSettings">설정으로 이동</button></div>
+  </div>
+
+  <section class="panel active" id="panel-today" role="tabpanel">
+    <div id="todayList"></div>
+  </section>
+
+  <section class="panel" id="panel-students" role="tabpanel">
+    <div style="margin-bottom:12px"><button class="btn" id="addStudentBtn" data-i18n="addStudent">원생 추가</button></div>
+    <div id="studentList"></div>
+  </section>
+
+  <section class="panel" id="panel-credits" role="tabpanel">
+    <p style="font-size:13px;color:var(--muted)" data-i18n="manualCreditNote">보강 크레딧은 결석/보강 기록 시 자동으로 계산돼요.</p>
+    <div id="creditList"></div>
+  </section>
+
+  <section class="panel" id="panel-settings" role="tabpanel">
+    <h2 data-i18n="settings">설정</h2>
+    <div class="field">
+      <label data-i18n="language">언어 / Language</label>
+      <select id="langSelect">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+    <h2 style="margin-top:20px">Supabase</h2>
+    <div class="field">
+      <label for="sbUrl" data-i18n="supabaseUrl">Supabase URL</label>
+      <input id="sbUrl" type="url" placeholder="https://xyzcompany.supabase.co" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="sbKey" data-i18n="supabaseKey">Supabase anon key</label>
+      <input id="sbKey" type="password" autocomplete="off">
+      <div class="hint" data-i18n="keyWarn">anon key만 입력하세요. service_role 키는 절대 입력하지 마세요.</div>
+    </div>
+    <button class="btn" id="connectBtn" data-i18n="connect">연결하기</button>
+    <button class="btn secondary" id="disconnectBtn" style="margin-top:8px" data-i18n="disconnect">연결 해제</button>
+    <div id="authBox" style="margin-top:20px" hidden>
+      <h2 data-i18n="signIn">로그인</h2>
+      <div class="field">
+        <label for="authEmail" data-i18n="email">이메일</label>
+        <input id="authEmail" type="email" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="authPw" data-i18n="password">비밀번호</label>
+        <input id="authPw" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn" id="signInBtn" data-i18n="signIn">로그인</button>
+      <button class="btn secondary" id="signOutBtn" style="margin-top:8px" data-i18n="signOut">로그아웃</button>
+      <p id="authState" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+    </div>
+    <div style="margin-top:20px">
+      <a class="row-btn" href="./SUPABASE_SETUP.md" data-i18n="setupGuide" style="text-decoration:none;display:inline-block">설치 안내 보기</a>
+    </div>
+  </section>
+</main>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 id="modalTitle"></h2>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1c1f22;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;display:none;z-index:99"></div>
+
+<footer class="footer">© 2026 Young Ma Studio</footer>
+
+<script src="./js/config.js"></script>
+<script src="./js/i18n.js"></script>
+<script src="./js/demo.js"></script>
+<script src="./js/store.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>

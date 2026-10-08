@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>우리 아이 수업 기록 | 송 피아노 스튜디오</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="./css/styles.css">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1d5c4d">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function (e) {
+      console.warn('서비스 워커 등록 실패:', e);
+    });
+  });
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.4/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div>
+    <div class="brand" data-i18n="appName">송 피아노 스튜디오</div>
+  </div>
+  <div class="actions">
+    <button class="icon-btn" id="langToggle" aria-label="Language">EN</button>
+  </div>
+</header>
+
+<main>
+  <div class="portal-head">
+    <div class="studio" data-i18n="appName">송 피아노 스튜디오</div>
+    <h1 data-i18n="portalTitle">우리 아이 수업 기록</h1>
+  </div>
+  <div id="portalBody"></div>
+</main>
+
+<footer class="footer">© 2026 Young Ma Studio</footer>
+
+<script src="./js/config.js"></script>
+<script src="./js/i18n.js"></script>
+<script src="./js/demo.js"></script>
+<script src="./js/store.js"></script>
+<script src="./js/portal.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+/* Song Piano Studio Manager — calm + minimal
+ * Design direction: 매일 쓰는 업무 도구. 첫 화면 = 오늘의 수업 목록 + 원터치 출석.
+ * 톤: calm + minimal. 기억에 남는 디테일: 수업별 O/X/보강 세그먼트 컨트롤 한 번 탭 기록.
+ * 금지 준수: 보라색 그라데이션 없음, 장식 블롭 없음, 마케팅 히어로 없음,
+ * 카드 속 카드 없음, em dash 없음.
+ */
+:root {
+  --paper: #faf9f7;
+  --surface: #ffffff;
+  --ink: #1c1f22;
+  --muted: #68707a;
+  --line: #e7e2d9;
+  --primary: #1d5c4d;
+  --primary-dark: #14453a;
+  --gold: #c9a227;
+  --present: #1d7a4f;
+  --absent: #b3402e;
+  --makeup: #b45309;
+  --chip-bg: #f1ede4;
+  --radius: 12px;
+  --font: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo",
+          "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.6;
+  font-size: 16px;
+}
+h1, h2, h3 { line-height: 1.35; letter-spacing: 0; margin: 0 0 8px; }
+p { margin: 0 0 8px; }
+
+/* 헤더 */
+.topbar {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar .brand { font-weight: 700; font-size: 17px; }
+.topbar .date { font-size: 13px; opacity: .85; }
+.topbar .actions { display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  background: rgba(255,255,255,.16); color: #fff; border: 0;
+  border-radius: 8px; padding: 6px 10px; font-size: 14px; cursor: pointer;
+  font-family: var(--font);
+}
+.icon-btn:active { transform: scale(.96); }
+
+/* 탭 */
+.tabs {
+  display: flex; gap: 4px; padding: 10px 12px 0;
+  border-bottom: 1px solid var(--line); background: var(--paper);
+  position: sticky; top: 57px; z-index: 9;
+}
+.tab {
+  flex: 1; border: 0; background: none; font-family: var(--font);
+  font-size: 15px; font-weight: 600; color: var(--muted);
+  padding: 10px 4px 12px; cursor: pointer; border-bottom: 3px solid transparent;
+}
+.tab[aria-selected="true"] { color: var(--primary); border-bottom-color: var(--primary); }
+
+main { max-width: 640px; margin: 0 auto; padding: 16px 16px 96px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* 수업 행: 오늘의 수업 */
+.lesson-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px 14px; margin-bottom: 10px;
+}
+.lesson-info { flex: 1; min-width: 0; }
+.lesson-info .name { font-weight: 700; font-size: 16px; }
+.lesson-info .meta { font-size: 13px; color: var(--muted); }
+.lesson-info .credit { font-size: 13px; color: var(--makeup); font-weight: 600; }
+
+/* O/X/보강 세그먼트 컨트롤: 한 번 탭으로 기록 */
+.seg { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.seg button {
+  border: 0; background: var(--surface); font-family: var(--font);
+  font-size: 15px; font-weight: 700; padding: 10px 16px; cursor: pointer; color: var(--muted);
+}
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on-present { background: var(--present); color: #fff; }
+.seg button.on-absent  { background: var(--absent); color: #fff; }
+.seg button.on-makeup  { background: var(--makeup); color: #fff; }
+.seg button:active { filter: brightness(.94); }
+
+/* 상태 칩 */
+.chip {
+  display: inline-block; font-size: 12px; font-weight: 700;
+  padding: 3px 10px; border-radius: 999px; background: var(--chip-bg); color: var(--muted);
+}
+.chip.present { background: #e3f2e9; color: var(--present); }
+.chip.absent  { background: #f8e6e1; color: var(--absent); }
+.chip.makeup  { background: #f7ecda; color: var(--makeup); }
+
+/* 원생 목록 행 */
+.student-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+}
+.student-row .who { flex: 1; min-width: 0; }
+.student-row .who .name { font-weight: 700; }
+.student-row .who .sub { font-size: 13px; color: var(--muted); }
+.row-btn {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: 8px; padding: 8px 12px; font-size: 14px; cursor: pointer;
+  font-family: var(--font); color: var(--ink); white-space: nowrap;
+}
+.row-btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.row-btn.danger { color: var(--absent); border-color: #ecc9c1; }
+
+/* 폼 */
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.field input, .field select, .field textarea {
+  width: 100%; font-family: var(--font); font-size: 16px;
+  border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+  background: var(--surface); color: var(--ink);
+}
+.field .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.btn {
+  display: inline-block; border: 0; border-radius: 10px; cursor: pointer;
+  font-family: var(--font); font-size: 16px; font-weight: 700;
+  padding: 12px 20px; background: var(--primary); color: #fff; width: 100%;
+}
+.btn.secondary { background: var(--chip-bg); color: var(--ink); }
+.btn:active { filter: brightness(.94); }
+
+/* 모달 */
+.modal-back {
+  position: fixed; inset: 0; background: rgba(20,24,20,.45);
+  display: none; align-items: flex-end; justify-content: center; z-index: 50;
+}
+.modal-back.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 16px 16px 0 0;
+  width: 100%; max-width: 640px; padding: 20px 16px 28px; max-height: 88vh; overflow: auto;
+}
+.modal h2 { font-size: 18px; margin-bottom: 12px; }
+
+/* 안내 배너 */
+.banner {
+  border: 1px solid var(--line); border-left: 4px solid var(--gold);
+  background: var(--surface); border-radius: var(--radius);
+  padding: 12px 14px; margin-bottom: 14px; font-size: 14px;
+}
+.banner strong { display: block; margin-bottom: 2px; }
+
+/* 포털 링크 박스 */
+.token-box {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--paper); border: 1px dashed var(--line);
+  border-radius: 10px; padding: 8px 10px; margin-top: 8px;
+}
+.token-box code {
+  flex: 1; font-size: 12px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; color: var(--muted);
+}
+
+/* 빈 상태 */
+.empty { text-align: center; color: var(--muted); padding: 40px 16px; font-size: 15px; }
+
+/* 푸터 */
+.footer {
+  text-align: center; font-size: 12px; color: var(--muted);
+  padding: 24px 16px 32px; border-top: 1px solid var(--line);
+  max-width: 640px; margin: 0 auto;
+}
+
+/* 포털(학부모) 화면 */
+.portal-head { text-align: center; padding: 28px 16px 12px; }
+.portal-head .studio { font-size: 13px; color: var(--muted); }
+.portal-head h1 { font-size: 22px; margin: 4px 0; }
+.balance-card {
+  background: var(--primary); color: #fff; border-radius: 16px;
+  padding: 20px; text-align: center; margin: 12px 0 20px;
+}
+.balance-card .num { font-size: 40px; font-weight: 800; }
+.balance-card .label { font-size: 14px; opacity: .85; }
+.history-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: 15px;
+}
+.history-row .d { color: var(--muted); font-size: 14px; }
+
+@media (min-width: 700px) {
+  .modal-back { align-items: center; }
+  .modal { border-radius: 16px; }
+}
